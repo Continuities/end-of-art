@@ -1,0 +1,8 @@
+{
+  "name": "end-of-art",
+  "version": "0.0.1",
+  "repository": "git@github.com:Continuities/end-of-art.git",
+  "author": "Michael Townsend <michael@doublespeakgames.com>",
+  "license": "MIT",
+  "private": true
+}
