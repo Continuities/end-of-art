@@ -1,8 +1,6 @@
-import { query } from './social-grep';
+import Art from './art';
 
-query({
-  endpoint: 'posts',
-  after: new Date(Date.now() - 604800000),
-  before: new Date(),
-  score: 1000
-}).then(console.log);
+(async () => {
+  const art = await Art();
+  console.log(art);
+})();

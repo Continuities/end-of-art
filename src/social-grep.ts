@@ -1,7 +1,23 @@
 import fetch from 'node-fetch';
 
-const DEBUG = true;
-const debug = (...args) => DEBUG && console.log(...args);
+export type SocialData = {
+  type: 'post' | 'comment';
+  id: string;
+  subreddit: {
+    id: string;
+    name: string;
+    nsfw: boolean;
+  };
+  created_utc: number;
+  permalink: string;
+  domain: string;
+  title: string;
+  selftext: string;
+  url: string;
+  score: number;
+};
+
+const debug = (...args) => process.env.DEBUG && console.log(...args);
 
 const token = process.env.SOCIALGREP_TOKEN;
 const uri = process.env.SOCIALGREP_URI;
@@ -22,7 +38,12 @@ type QueryParams = {
 
 const dateParam = (date: Date) => date.toISOString().slice(0, 10);
 
-export const query = async ({ endpoint, before, after, score }: QueryParams) => {
+export const query = async ({
+  endpoint,
+  before,
+  after,
+  score
+}: QueryParams): Promise<Array<SocialData>> => {
   const queryUri = `${uri}/search/${endpoint}?query=%2Fr%2Fnews%2Cafter%3A${dateParam(
     after
   )}%2Cbefore%3A${dateParam(before)}%2Cscore%3A${score}`;
@@ -36,5 +57,6 @@ export const query = async ({ endpoint, before, after, score }: QueryParams) => 
   if (!response.ok) {
     throw new Error(`Query failed ${response.status}`);
   }
-  return response.json();
+  const json = await response.json();
+  return json['data'];
 };
