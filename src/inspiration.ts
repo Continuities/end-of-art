@@ -11,17 +11,22 @@ const getContent = async (posts: Array<SocialData>): Promise<string | null> => {
   return null;
 };
 
+const SCORE_BRACKETS = [100000, 10000, 1000];
+
 export default async () => {
-  const posts = await query({
-    endpoint: 'posts',
-    after: new Date(Date.now() - 604800000),
-    before: new Date(),
-    score: 1000
-  });
-  const articleContent = await getContent(posts);
-  if (!articleContent) {
-    throw new Error('No scrapable articles found!');
+  for (const bracket of SCORE_BRACKETS) {
+    const posts = await query({
+      endpoint: 'posts',
+      after: new Date(Date.now() - 604800000),
+      before: new Date(),
+      score: bracket
+    });
+
+    const articleContent = await getContent(posts);
+    if (articleContent) {
+      return summarise(articleContent);
+    }
   }
 
-  return summarise(articleContent);
+  throw new Error('No scrapable articles found!');
 };

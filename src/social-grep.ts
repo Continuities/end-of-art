@@ -58,5 +58,7 @@ export const query = async ({
     throw new Error(`Query failed ${response.status}`);
   }
   const json = await response.json();
-  return json['data'];
+  const data = json['data'] as Array<SocialData>;
+  data.sort((a, b) => b.score - a.score);
+  return data;
 };
