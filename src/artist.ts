@@ -5,7 +5,7 @@ if (!baseUri) {
   throw new Error('ART_URI undefined');
 }
 
-export const generate = async (prompt: string): Promise<HTMLImageElement> => {
+export const generate = async (prompt: string): Promise<string> => {
   const response = await fetch(baseUri, {
     method: 'POST',
     body: JSON.stringify({
@@ -22,7 +22,5 @@ export const generate = async (prompt: string): Promise<HTMLImageElement> => {
   }
   const { generated_images: images, generated_images_format: format } =
     (await response.json()) as any;
-  const img = new Image();
-  img.src = `data:image/${format};base64,${images[0].image}`;
-  return img;
+  return `data:image/${format};base64,${images[0].image}`;
 };

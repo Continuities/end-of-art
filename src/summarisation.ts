@@ -31,5 +31,5 @@ export const summarise = async (text: string): Promise<string> => {
   if (!response.ok) {
     throw new Error(`Failed to summarise ${response.status}`);
   }
-  return response.text();
+  return ((await response.json()) as any).summary;
 };
