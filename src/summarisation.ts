@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 import { parse } from 'node-html-parser';
 
+const USE_INNERTEXT = true;
+
 const baseUri = process.env.SUMMARISE_URI;
 if (!baseUri) {
   throw new Error('SUMMARISE_URI undefined');
@@ -14,8 +16,15 @@ export const scrape = async (uri: string): Promise<string | null> => {
   }
   const text = await response.text();
   const doc = parse(text);
-  return doc
-    .getElementsByTagName('meta')
+
+  if (USE_INNERTEXT) {
+    const body = doc.getElementsByTagName('body')[0];
+    const article = doc.getElementsByTagName('article')[0];
+    const main = doc.getElementsByTagName('main')[0];
+    return (article ?? main ?? body).innerText;
+  }
+
+  return Array.from(doc.getElementsByTagName('meta'))
     .find((t) => t.getAttribute('property') === 'og:description')
     ?.getAttribute('content');
 };

@@ -2,6 +2,7 @@ import { query, type SocialData } from './social-grep';
 import { scrape, summarise } from './summarisation';
 
 const getContent = async (posts: Array<SocialData>): Promise<string | null> => {
+  console.log(posts);
   for (const { url } of posts) {
     const content = await scrape(url);
     if (content) {
@@ -12,18 +13,20 @@ const getContent = async (posts: Array<SocialData>): Promise<string | null> => {
 };
 
 const SCORE_BRACKETS = [100000, 10000, 1000];
+const WINDOW = 1000 * 60 * 60 * 24;
 
 export default async () => {
   for (const bracket of SCORE_BRACKETS) {
     const posts = await query({
       endpoint: 'posts',
-      after: new Date(Date.now() - 604800000),
-      before: new Date(),
+      after: new Date(Date.now() - 2 * WINDOW),
+      before: new Date(Date.now() - WINDOW),
       score: bracket
     });
 
     const articleContent = await getContent(posts);
     if (articleContent) {
+      console.log(articleContent);
       return summarise(articleContent);
     }
   }
