@@ -2,7 +2,6 @@ import { query, type SocialData } from './social-grep';
 import { scrape, summarise } from './summarisation';
 
 const getContent = async (posts: Array<SocialData>): Promise<string | null> => {
-  console.log(posts);
   for (const { url } of posts) {
     const content = await scrape(url);
     if (content) {
@@ -25,8 +24,8 @@ export default async () => {
     });
 
     const articleContent = await getContent(posts);
+    console.log(articleContent);
     if (articleContent) {
-      console.log(articleContent);
       return summarise(articleContent);
     }
   }

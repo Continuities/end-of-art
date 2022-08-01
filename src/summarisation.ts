@@ -17,16 +17,12 @@ export const scrape = async (uri: string): Promise<string | null> => {
   const text = await response.text();
   const doc = parse(text);
 
-  if (USE_INNERTEXT) {
-    const body = doc.getElementsByTagName('body')[0];
-    const article = doc.getElementsByTagName('article')[0];
-    const main = doc.getElementsByTagName('main')[0];
-    return (article ?? main ?? body).innerText;
-  }
-
-  return Array.from(doc.getElementsByTagName('meta'))
-    .find((t) => t.getAttribute('property') === 'og:description')
-    ?.getAttribute('content');
+  const article = doc.getElementsByTagName('article')[0];
+  const main = doc.getElementsByTagName('main')[0];
+  const description = Array.from(doc.getElementsByTagName('meta')).find(
+    (t) => t.getAttribute('property') === 'og:description'
+  );
+  return (article ?? main)?.innerText ?? description?.getAttribute('content');
 };
 
 export const summarise = async (text: string): Promise<string> => {
